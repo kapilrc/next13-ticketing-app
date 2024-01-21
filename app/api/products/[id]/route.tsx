@@ -6,14 +6,14 @@ interface Props {
 }
 
 export function GET(request: NextRequest, { params: { id } }: Props) {
-  // fetch user with that id from a db
+  // fetch product with that id from a db
   // return NextResponse.json([{ id: 1, name: 'Kapil' }]);
   // if not found return 404
   if (id > 10) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
   // finally return actual data
-  return NextResponse.json({ id: 1, name: 'Kapil' });
+  return NextResponse.json({ id: 1, name: 'Milk', price: 2.6 });
 }
 
 export async function PUT(request: NextRequest, { params: { id } }: Props) {
@@ -24,24 +24,24 @@ export async function PUT(request: NextRequest, { params: { id } }: Props) {
   if (!validation.success)
     return NextResponse.json(validation.error.errors, { status: 404 });
 
-  // fetch the user with the given id
+  // fetch the product with the given id
   // if doesn't exist, return 404
   if (id > 10) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
-  // update the user
-  // return the updated user
-  return NextResponse.json({ id, name: body.name });
+  // update the product
+  // return the updated product
+  return NextResponse.json({ id, ...body });
 }
 
 export async function DELETE(request: NextRequest, { params: { id } }: Props) {
   // if not found, return 404
   if (id > 10) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
-  // delete the user
+  // delete the product
   // return 200
-  return NextResponse.json({ message: 'deleted user successfully' });
+  return NextResponse.json({ message: 'deleted product successfully' });
 }
