@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import schema from '../schema';
+import prisma from '@/prisma/client';
 
 interface Props {
-  params: { id: number };
+  params: { id: string };
 }
 
-export function GET(request: NextRequest, { params: { id } }: Props) {
+export async function GET(request: NextRequest, { params: { id } }: Props) {
   // fetch product with that id from a db
-  // return NextResponse.json([{ id: 1, name: 'Kapil' }]);
+  const product = await prisma.product.findUnique({
+    where: { id: parseInt(id) }
+  });
   // if not found return 404
-  if (id > 10) {
+  if (!product) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
   // finally return actual data
-  return NextResponse.json({ id: 1, name: 'Milk', price: 2.6 });
+  return NextResponse.json(product);
 }
 
 export async function PUT(request: NextRequest, { params: { id } }: Props) {
@@ -25,23 +28,42 @@ export async function PUT(request: NextRequest, { params: { id } }: Props) {
     return NextResponse.json(validation.error.errors, { status: 404 });
 
   // fetch the product with the given id
+  const product = await prisma.product.findUnique({
+    where: { id: parseInt(id) }
+  });
+
   // if doesn't exist, return 404
-  if (id > 10) {
+  if (!product) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
   // update the product
+  const updatedProduct = await prisma.product.update({
+    where: { id: parseInt(id) },
+    data: {
+      name: body.name,
+      price: body.price
+    }
+  });
   // return the updated product
-  return NextResponse.json({ id, ...body });
+  return NextResponse.json(updatedProduct);
 }
 
 export async function DELETE(request: NextRequest, { params: { id } }: Props) {
   // if not found, return 404
-  if (id > 10) {
+  const product = await prisma.product.findUnique({
+    where: { id: parseInt(id) }
+  });
+
+  if (!product) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
   // delete the product
+  await prisma.product.delete({
+    where: { id: parseInt(id) }
+  });
+
   // return 200
   return NextResponse.json({ message: 'deleted product successfully' });
 }
